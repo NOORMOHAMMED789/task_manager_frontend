@@ -94,7 +94,7 @@ const Login = () => {
             </div>
           </form>
           <div className="text-center flex justify-center items-center gap-3">
-            <span>Don't have an account?</span>
+            <span>Dont have an account?</span>
             <Link href="/signup" className="text-blue-500 hover:underline">
               Signup
             </Link>
