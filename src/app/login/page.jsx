@@ -7,9 +7,11 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { toast } from "react-toastify";
+import { PiSpinnerGapThin } from "react-icons/pi";
 
 const Login = () => {
   const { googleLogin, logout, login } = useAuth();
+  const [loading, setLoading] = useState(false);
   const googleSignIn = async () => {
     try {
       await googleLogin();
@@ -68,10 +70,13 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     try {
+      setLoading(true);
       e.preventDefault();
       console.log("clicked", formData.values);
       await login(formData.values.email, formData.values.password);
+      setLoading(false);
     } catch (error) {
+       setLoading(false);
       console.log("error is", error.code);
       if (error.code === "auth/invalid-credential") {
         toast.warning("Looks like your not signed up!.", {
@@ -90,7 +95,7 @@ const Login = () => {
           closeOnClick: true,
           theme: "light",
         });
-      } else if(error.code === "auth/missing-password"){
+      } else if (error.code === "auth/missing-password") {
         toast.error("Please enter the password", {
           position: "top-right",
           autoClose: 1500,
@@ -98,7 +103,7 @@ const Login = () => {
           closeOnClick: true,
           theme: "light",
         });
-      } else if(error.code === "auth/too-many-requests"){
+      } else if (error.code === "auth/too-many-requests") {
         toast.warning("Too many login attempts. Try later!", {
           position: "top-right",
           autoClose: 1500,
@@ -139,7 +144,13 @@ const Login = () => {
               disabled={!formData.values.email || !formData.values.password}
               className="text-center px-1.5 py-1.5 md:px-2 md:py-2 lg:px-3 lg:py-3 disabled:bg-gray-400 disabled:cursor-not-allowed text-white bg-blue-500 hover:cursor-pointer hover:shadow-2xl"
             >
-              Login
+              {loading ? (
+                <span className="inline-block animate-spin360">
+                  <PiSpinnerGapThin size={24} />
+                </span>
+              ) : (
+                "Login"
+              )}
             </button>
           </form>
           <div className="text-center flex justify-center items-center gap-3">

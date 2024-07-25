@@ -60,6 +60,16 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     await signOut(auth);
     setUser(null);
+     setTimeout(() => {
+       toast.success("Successfully logged-out.", {
+         position: "top-right",
+         autoClose: 1500,
+         hideProgressBar: false,
+         closeOnClick: true,
+         progress: undefined,
+         theme: "light",
+       });
+     }, 400);
   };
 
   const createUser = async (email,password,firstName, lastName) => {
