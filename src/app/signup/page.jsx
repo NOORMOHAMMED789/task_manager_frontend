@@ -134,11 +134,11 @@ const SignUp = () => {
     }
   };
   return (
-    <div className="w-full md:w-full px-10 md:px-5 lg:px-0 lg:w-[500px] mx-auto my-auto mt-[60px] md:mt-[80px] lg:mt-[100px]">
+    <div className="w-full mb-10 md:w-full px-10 md:px-5 lg:px-0 lg:w-[500px] mx-auto my-auto mt-[60px] md:mt-[80px] lg:mt-[50px]">
       <div className="font-extrabold text-blue-500 mb-2 md:mb-3 lg:mb-4 text-[24px] md:text-[30px] lg:text-[40px]">
         SignUp
       </div>
-      <div className="rounded-xl border-blue-500 border-[2px] w-full px-2 lg:w-[600px] lg:h-[400px]">
+      <div className="rounded-xl border-blue-500 border-[2px] w-full px-2 lg:w-[600px]">
         <div className="px-5 py-5 md:px-6 md:py-6 lg:px-7 lg:py-7 flex flex-col gap-7">
           <form onSubmit={handleSubmit} className="flex flex-col gap-7">
             <Input
