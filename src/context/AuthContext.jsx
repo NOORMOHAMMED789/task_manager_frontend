@@ -6,8 +6,11 @@ import {
   signInWithEmailAndPassword,
   signOut,
   signInWithPopup,
+  createUserWithEmailAndPassword,
+  updateProfile,
 } from "firebase/auth";
 import { auth, provider } from "@/firebase"; // Ensure correct import
+import { toast } from "react-toastify";
 
 const AuthContext = React.createContext(null);
 
@@ -20,21 +23,75 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   const login = async (email, password) => {
-    await signInWithEmailAndPassword(auth, email, password);
+    const response = await signInWithEmailAndPassword(auth, email, password);
+    if(response.user) {
+      router.replace("/dashboard/tasks")
+       setTimeout(() => {
+         toast.success("Welcome to dashboard.", {
+           position: "top-right",
+           autoClose: 1500,
+           hideProgressBar: false,
+           closeOnClick: true,
+           progress: undefined,
+           theme: "light",
+         });
+       }, 400);
+    }
   };
 
   const googleLogin = async () => {
     provider.setCustomParameters({
-      prompt: "select_account", // Always prompt for account selection
+      prompt: "select_account", 
     });
     await signInWithPopup(auth, provider);
     router.push("/dashboard/tasks")
+    setTimeout(() => {
+      toast.success("Welcome to dashboard.", {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        progress: undefined,
+        theme: "light",
+      });
+    },400)
   };
 
   const logout = async () => {
     await signOut(auth);
     setUser(null);
   };
+
+  const createUser = async (email,password,firstName, lastName) => {
+     try {
+       const userCredential = await createUserWithEmailAndPassword(
+         auth,
+         email,
+         password
+       );
+       const user = userCredential.user;
+
+       // Update the user's profile with the display name
+       await updateProfile(user, {
+         displayName: `${firstName} ${lastName}`,
+       });
+       router.replace("/dashboard/tasks")
+        setTimeout(() => {
+          toast.success("Welcome to dashboard.", {
+            position: "top-right",
+            autoClose: 1500,
+            hideProgressBar: false,
+            closeOnClick: true,
+            progress: undefined,
+            theme: "light",
+          });
+        }, 400);
+     } catch (error) {
+       const errorCode = error.code;
+       const errorMessage = error.message;
+       console.error("Error creating user:", errorCode, errorMessage);
+     }
+  }
 
   const checkAccess = async (fbUser) => {
     const idTokenRes = await fbUser.getIdTokenResult();
@@ -79,6 +136,7 @@ export const AuthProvider = ({ children }) => {
     logout,
     googleLogin,
     setUser,
+    createUser
   };
 
   return (

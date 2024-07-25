@@ -1,4 +1,5 @@
 import { useAuth } from "@/context/AuthContext";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { CiMemoPad } from "react-icons/ci";
 import { CiLogin } from "react-icons/ci";
@@ -32,16 +33,16 @@ const Header = () => {
             onClick={googleSignIn}
             className="cursor-pointer px-2 py-2 md:px-2 md:py-2 lg:px-3 lg:py-2 flex justify-center bg-white text-blue-600 rounded-md items-center"
           >
-            <div className="text-[12px] md:text-[14px] lg:text-[16px]">
+            <div className="text-[12px] md:text-[14px] lg:text-[16px] hover:cursor-pointer hover:shadow-2xl">
               Login
             </div>
             <div>
               <CiLogin size={24} />
             </div>
           </div>
-          <div className="text-[12px] text-white md:text-[14px] lg:text-[16px]">
+          <Link href="/signup" className="text-[12px] text-white md:text-[14px] lg:text-[16px] hover:underline hover:shadow-2xl hover:cursor-pointer">
             Sign up
-          </div>
+          </Link>
         </div>
       )}
       {user && <div onClick={handleLogout}>Logout</div>}

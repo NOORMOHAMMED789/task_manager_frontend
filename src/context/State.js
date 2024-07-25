@@ -1,17 +1,17 @@
 const initialState = {
-
+  toast: null
 }
 
 const actions = {
-
+  setToast: "SET_TOAST",
 }
 
 const reducer = (state, action) => {
   const { type, data } = action;
   let res;
   switch (type) {
-    case actions.setBrands:
-      res = { ...state, brands: data.brands };
+    case actions.setToast:
+      res = { ...state, toast: data };
       break;
   }
 }
