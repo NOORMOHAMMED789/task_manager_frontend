@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { createNewTask } from "../ApiCalls";
+import { createNewTask, deleteSingleTask, updateTask } from "../ApiCalls";
 
 const TaskInputForm = ({ editData, editTask, createTask, deleteTask, taskId, viewDetails }) => {
   const router = useRouter()
@@ -45,15 +45,7 @@ const TaskInputForm = ({ editData, editTask, createTask, deleteTask, taskId, vie
   }
   const handleDeleteTask = async () => {
     try {
-      const taskResp = await fetch(
-        `http://localhost:8080/tasks/delete?taskId=${taskId}`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const taskResp = await deleteSingleTask(taskId);
       if (taskResp.ok) {
         const taskData = await taskResp.json();
         if (taskData.message === "success") {
@@ -107,13 +99,7 @@ const TaskInputForm = ({ editData, editTask, createTask, deleteTask, taskId, vie
 
   const handleEditSubmit = async () => {
     try {
-      const taskResp = await fetch(`http://localhost:8080/tasks/update?taskId=${taskId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData.values),
-      });
+      const taskResp = await updateTask(taskId, formData.values);
       if (taskResp.ok) {
         const taskData = await taskResp.json();
         toast.success("Task Successfully Edited", {

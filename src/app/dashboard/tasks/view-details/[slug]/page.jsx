@@ -1,4 +1,5 @@
 "use client";
+import { getSingleTask } from "@/components/ApiCalls";
 import TaskInputForm from "@/components/TaskCreationForm";
 import { useEffect, useState } from "react";
 
@@ -8,12 +9,7 @@ const ViewDetails = ({ params }) => {
   // Fetch the task details with that id
   const fetchSingleTask = async () => {
     try {
-      const taskResp = await fetch(
-        `http://localhost:8080/tasks/singletask?taskId=${taskId}`,
-        {
-          method: "GET",
-        }
-      );
+      const taskResp = await getSingleTask(taskId);
       if (taskResp.ok) {
         const taskData = await taskResp.json();
         console.log("task Data is", taskData);

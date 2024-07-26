@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { getDateFormat } from "../Helpers";
 import Link from "next/link";
 import { toast } from "react-toastify";
-import { getAllTasks, getSingleTask } from "../ApiCalls";
+import { getAllTasks, getSingleTask, updateTask } from "../ApiCalls";
 
 const initialData = {
   tasks: [],
@@ -21,6 +21,7 @@ const DisplayTasks = () => {
     try {
       showLoading(true)
       const taskResp = await getAllTasks()
+      console.log("all tasks",taskResp)
       if (taskResp.ok) {
         const taskData = await taskResp.json();
         const todoTasks = taskData.allTasks.filter(
@@ -66,9 +67,6 @@ const DisplayTasks = () => {
   const onDrop = async (event, columnName) => {
     const task = JSON.parse(event.dataTransfer.getData("task"));
     task.type = columnName;
-
-
-    // Call the update API
     try {
       const updateResp = await updateTask(task.taskId, task);
       if (updateResp.ok) {

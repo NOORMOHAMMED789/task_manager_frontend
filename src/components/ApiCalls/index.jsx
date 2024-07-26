@@ -11,6 +11,17 @@ export async function getSingleTask(taskId) {
   );
 }
 
+export async function deleteSingleTask(taskId) {
+  const headers = await getHeader();
+  return fetch(
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/tasks/delete?taskId=${taskId}`,
+    {
+      method: "DELETE",
+      headers,
+    }
+  );
+}
+
 export async function getAllTasks() {
   const headers = await getHeader();
   return fetch(
