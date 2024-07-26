@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { createNewTask, deleteSingleTask, updateTask } from "../ApiCalls";
+import { PiSpinnerGapThin } from "react-icons/pi";
 
 const TaskInputForm = ({ editData, editTask, createTask, deleteTask, taskId, viewDetails }) => {
   const router = useRouter()
@@ -23,6 +24,7 @@ const TaskInputForm = ({ editData, editTask, createTask, deleteTask, taskId, vie
       description: null,
     },
   });
+  const [loading,showLoading] = useState(false)
   // function to update the form fields
   function updateFormData(field, value, result, isTouched) {
     setFormData((prevState) => {
@@ -45,6 +47,7 @@ const TaskInputForm = ({ editData, editTask, createTask, deleteTask, taskId, vie
   }
   const handleDeleteTask = async () => {
     try {
+      showLoading(true)
       const taskResp = await deleteSingleTask(taskId);
       if (taskResp.ok) {
         const taskData = await taskResp.json();
@@ -58,11 +61,13 @@ const TaskInputForm = ({ editData, editTask, createTask, deleteTask, taskId, vie
             theme: "light",
           });
         }
+        showLoading(false)
         router.replace("/dashboard/tasks")
       } else {
         console.error("Failed to fetch task", taskResp.statusText);
       }
     } catch (error) {
+      showLoading(false)
       console.error("Error fetching task:", error);
     }
   };
@@ -77,6 +82,7 @@ const TaskInputForm = ({ editData, editTask, createTask, deleteTask, taskId, vie
 
   const handleSubmit = async() => {
     try{
+      showLoading(true)
       const taskResp = await createNewTask(formData.values);
       if (taskResp.ok) {
         const taskData = await taskResp.json();
@@ -89,16 +95,20 @@ const TaskInputForm = ({ editData, editTask, createTask, deleteTask, taskId, vie
           theme: "light",
         });
         router.replace("/dashboard/tasks")
+      showLoading(false);
+
       } else {
         console.error("Failed to fetch task", taskResp.statusText);
       }
     }catch(error){
-
+      showLoading(false);
+      console.log("error",error)
     }
   };
 
   const handleEditSubmit = async () => {
     try {
+      showLoading(true)
       const taskResp = await updateTask(taskId, formData.values);
       if (taskResp.ok) {
         const taskData = await taskResp.json();
@@ -111,10 +121,15 @@ const TaskInputForm = ({ editData, editTask, createTask, deleteTask, taskId, vie
           theme: "light",
         });
         router.replace("/dashboard/tasks");
+      showLoading(false);
+
       } else {
         console.error("Failed to fetch task", taskResp.statusText);
       }
-    } catch (error) {}
+    } catch (error) {
+      showLoading(false);
+      console.log("error",error)
+    }
   };
 
 
@@ -166,7 +181,13 @@ const TaskInputForm = ({ editData, editTask, createTask, deleteTask, taskId, vie
             onClick={handleEditSubmit}
             className="disabled:bg-slate-400 disabled:cursor-not-allowed px-3 md:px-4 lg:px-6 rounded-md py-2 bg-blue-500 text-white hover:cursor-pointer hover:shadow-2xl"
           >
-            Save
+            {loading ? (
+              <span className="inline-block animate-spin360 px-4">
+                <PiSpinnerGapThin size={19} />
+              </span>
+            ) : (
+              "Save"
+            )}
           </button>
 
           <Link
@@ -184,7 +205,13 @@ const TaskInputForm = ({ editData, editTask, createTask, deleteTask, taskId, vie
             disabled={!formData.values.title && !formData.values.description}
             className="px-4 py-2 bg-green-500 disabled:bg-gray-400 disabled:cursor-not-allowed text-white text-[14px] md:text-[16px] lg:text-[18px] rounded-lg hover:cursor-pointer hover:shadow-2xl"
           >
-            Create
+            {loading ? (
+              <span className="inline-block animate-spin360 px-4">
+                <PiSpinnerGapThin size={20} />
+              </span>
+            ) : (
+              "Create"
+            )}
           </button>
           <Link
             className="px-4 py-2 inline-block bg-red-500 text-white text-[14px] md:text-[16px] lg:text-[18px] rounded-lg hover:cursor-pointer hover:shadow-2xl"
@@ -201,7 +228,13 @@ const TaskInputForm = ({ editData, editTask, createTask, deleteTask, taskId, vie
             disabled={!formData.values.title && !formData.values.description}
             className="px-4 py-2 bg-red-500 disabled:bg-gray-400 disabled:cursor-not-allowed text-white text-[14px] md:text-[16px] lg:text-[18px] rounded-lg hover:cursor-pointer hover:shadow-2xl"
           >
-            Delete
+            {loading ? (
+              <span className="inline-block animate-spin360 px-4">
+                <PiSpinnerGapThin size={20} />
+              </span>
+            ) : (
+              "Delete"
+            )}
           </button>
           <Link
             className="px-4 py-2 inline-block bg-green-500 text-white text-[14px] md:text-[16px] lg:text-[18px] rounded-lg hover:cursor-pointer hover:shadow-2xl"

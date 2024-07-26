@@ -2,6 +2,7 @@
 import { getSingleTask } from "@/components/ApiCalls";
 import TaskInputForm from "@/components/TaskCreationForm";
 import { useEffect, useState } from "react";
+import { PiSpinnerGapThin } from "react-icons/pi";
 
 const Edit = ({ params }) => {
   const [task, setTask] = useState(null);
@@ -35,11 +36,17 @@ const Edit = ({ params }) => {
             <label className="mb-2 text-[16px] md:text-[20px] lg:text-[32px] font-bold">
               {`Edit Task of taskId: ${taskId}`}
             </label>
-            <TaskInputForm editData={task} editTask={true} taskId={taskId}/>
+            <TaskInputForm editData={task} editTask={true} taskId={taskId} />
           </div>
         </div>
       )}
-      {!task && <span className="absolute left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] text-white z-40 text-[16px]">Loading task details. Please wait....</span>}
+      {!task && (
+        <span className="absolute left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] text-white z-40 text-[16px]">
+          <span className="inline-block animate-spin360 px-4">
+          <PiSpinnerGapThin size={40} />
+        </span>
+        </span>
+      )}
     </>
   );
 };

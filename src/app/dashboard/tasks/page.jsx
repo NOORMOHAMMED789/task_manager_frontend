@@ -2,67 +2,24 @@
 import Filters from "@/components/Filters"
 import DisplayTasks from "@/components/Tasks";
 import Link from "next/link"
+import { useState } from "react";
 
 const Tasks = () => {
-    const fetchAllTasks = () => {
+    const [formData, setFormData] = useState({
+      values: {
+        search: "",
+        sortBy: "today",
+      },
+      touched: {
+        search: false,
+        sortBy: false,
+      },
+      errors: {
+        search: null,
+        sortBy: null,
+      },
+    });
 
-    }
-    const tasks = [
-      {
-        name: "test",
-        description: "test task",
-        createdAt: Date.now(),
-        taskId: 1,
-      },
-      {
-        name: "test",
-        description: "test task",
-        createdAt: Date.now(),
-        taskId: 2,
-      },
-      {
-        name: "test",
-        description: "test task",
-        createdAt: Date.now(),
-        taskId: 3,
-      },
-      {
-        name: "test",
-        description: "test task",
-        createdAt: Date.now(),
-        taskId: 4,
-      },
-      {
-        name: "test",
-        description: "test task",
-        createdAt: Date.now(),
-        taskId: 5,
-      },
-      {
-        name: "test",
-        description: "test task",
-        createdAt: Date.now(),
-        taskId: 6,
-      },
-      {
-        name: "test",
-        description: "test task",
-        createdAt: Date.now(),
-        taskId: 7,
-      },
-      {
-        name: "test",
-        description: "test task",
-        createdAt: Date.now(),
-        taskId: 8,
-      },
-      {
-        name: "test",
-        description: "test task",
-        createdAt: Date.now(),
-        taskId: 9,
-      },
-    ];
     return (
       <div className="lg:pl-11 lg:pr-11 md:pl-8 md:pr-8 pl-6 pr-6">
         <Link
@@ -72,10 +29,10 @@ const Tasks = () => {
           Add Task
         </Link>
         <div className="mt-3 md:mt-5 lg:mt-7 w-full px-3 py-3 md:px-4 md:py-4 lg:px-5 lg:py-5 shadow-xl rounded-lg">
-          <Filters />
+          <Filters formData={formData} setFormData={setFormData} />
         </div>
         <div className="mt-3 md:mt-5 lg:mt-7 w-full px-3 py-3 md:px-4 md:py-4 lg:px-5 lg:py-5">
-          <DisplayTasks listOfTasks={tasks} />
+          <DisplayTasks query={formData.values}/>
         </div>
       </div>
     );

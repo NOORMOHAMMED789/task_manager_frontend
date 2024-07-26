@@ -3,6 +3,7 @@ import { getDateFormat } from "../Helpers";
 import Link from "next/link";
 import { toast } from "react-toastify";
 import { getAllTasks, getSingleTask, updateTask } from "../ApiCalls";
+import { PiSpinnerGapThin } from "react-icons/pi";
 
 const initialData = {
   tasks: [],
@@ -13,15 +14,15 @@ const initialData = {
   },
 };
 
-const DisplayTasks = () => {
+const DisplayTasks = ({ query }) => {
   const [data, setData] = useState(initialData);
-  const [loading, showLoading] = useState(false)
+  const [loading, showLoading] = useState(false);
 
-  const fetchAllTasks = async () => {
+  const fetchAllTasks = async (query) => {
     try {
-      showLoading(true)
-      const taskResp = await getAllTasks()
-      console.log("all tasks",taskResp)
+      showLoading(true);
+      const taskResp = await getAllTasks(query);
+      console.log("all tasks", taskResp);
       if (taskResp.ok) {
         const taskData = await taskResp.json();
         const todoTasks = taskData.allTasks.filter(
@@ -41,20 +42,20 @@ const DisplayTasks = () => {
             done: doneTasks,
           },
         });
-        showLoading(false)
+        showLoading(false);
       } else {
         showLoading(false);
         console.error("Failed to fetch tasks", taskResp.statusText);
       }
     } catch (error) {
-        showLoading(false);
+      showLoading(false);
       console.error("Error fetching tasks:", error);
     }
   };
 
   useEffect(() => {
-    fetchAllTasks();
-  },[]);
+    fetchAllTasks(query);
+  }, []);
 
   const onDragStart = (event, task) => {
     event.dataTransfer.setData("task", JSON.stringify(task));
@@ -76,8 +77,8 @@ const DisplayTasks = () => {
             (t) => t.taskId !== task.taskId
           );
         });
-        const data1 = await updateResp.json()
-        console.log("data is",data1)
+        const data1 = await updateResp.json();
+        console.log("data is", data1);
         newColumns[columnName].push(task);
         setData({ ...data, columns: newColumns });
         toast.success(`Task moved to ${columnName}.`, {
@@ -106,7 +107,10 @@ const DisplayTasks = () => {
       >
         <div className="bg-blue-300 px-2 py-2 rounded-md">
           <div className="text-[12px] md:text-[14px] lg:text-[16px] font-medium">
-            {task.title} - {`${task.taskId}`}
+            TaskId - {task.taskId}
+          </div>
+          <div className="text-[12px] md:text-[14px] lg:text-[16px] font-medium">
+            {task.title}
           </div>
           <div className="text-[12px] md:text-[14px] lg:text-[16px]">
             {task.description}
@@ -141,7 +145,7 @@ const DisplayTasks = () => {
 
   return (
     <>
-      {true && (
+      {!loading && (
         <div className="flex flex-row gap-3 flex-wrap md:flex-wrap lg:flex-nowrap">
           <div
             className="w-full md:w-full lg:w-2/6 bg-white px-2 py-3 shadow-xl border rounded-md"
@@ -176,11 +180,13 @@ const DisplayTasks = () => {
           </div>
         </div>
       )}
-      {/* {loading && (
-        <span className="absolute left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] text-white z-40 text-[16px]">
-          Loading tasks. Please wait....
+      {loading && (
+        <span className="absolute left-[50%] z-50 top-[60%] translate-x-[-50%] translate-y-[-50%] text-black text-[16px] md:text-[20px] lg:text-[32px]">
+          <span className="inline-block animate-spin360">
+            <PiSpinnerGapThin size={30} />
+          </span>
         </span>
-      )} */}
+      )}
     </>
   );
 };

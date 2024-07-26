@@ -2,6 +2,7 @@
 import { getSingleTask } from "@/components/ApiCalls";
 import TaskInputForm from "@/components/TaskCreationForm";
 import { useEffect, useState } from "react";
+import { PiSpinnerGapThin } from "react-icons/pi";
 
 const ViewDetails = ({ params }) => {
   const taskId = params.slug;
@@ -38,7 +39,9 @@ const ViewDetails = ({ params }) => {
       )}
       {!task && (
         <span className="absolute left-[50%] z-40 top-[50%] translate-x-[-50%] translate-y-[-50%] text-white text-[16px]">
-          Loading task details. Please wait....
+          <span className="inline-block animate-spin360 px-4">
+            <PiSpinnerGapThin size={40} />
+          </span>
         </span>
       )}
     </>
