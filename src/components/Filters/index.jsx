@@ -57,7 +57,7 @@ const Filters = ({ formData, setFormData }) => {
           value={formData.values.sortBy}
         >
           <option value="today">Today</option>
-          <option value="lastWeek">Last Week</option>
+          <option value="yesterday">Yesterday</option>
           <option value="lastYear">Last Year</option>
         </select>
       </div>

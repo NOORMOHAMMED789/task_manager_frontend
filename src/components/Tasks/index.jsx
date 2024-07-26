@@ -17,25 +17,40 @@ const initialData = {
 const DisplayTasks = ({ query }) => {
   const [data, setData] = useState(initialData);
   const [loading, showLoading] = useState(false);
-
-  const fetchAllTasks = async (query) => {
+  const fetchAllTasks = async () => {
     try {
       showLoading(true);
-      const taskResp = await getAllTasks(query);
-      console.log("all tasks", taskResp);
+      const taskResp = await getAllTasks();
       if (taskResp.ok) {
         const taskData = await taskResp.json();
-        const todoTasks = taskData.allTasks.filter(
-          (task) => task.type === "todo"
+        console.log("all tasks", taskData);
+
+        const filteredTasks = taskData.allTasks.filter(
+          (task) =>
+            task.title.toLowerCase().includes(query.search.toLowerCase()) ||
+            task.description.toLowerCase().includes(query.search.toLowerCase())
         );
-        const inProgressTasks = taskData.allTasks.filter(
+
+        const sortedTasks = filteredTasks.sort((a, b) => {
+          if (query.sortBy === "today") {
+            return new Date(b.createdAt) - new Date(a.createdAt);
+          } else if (query.sortBy === "yesterday") {
+            return new Date(b.createdAt) - new Date(a.createdAt);
+          } else if (query.sortBy === "lastYear") {
+            return new Date(b.createdAt) - new Date(a.createdAt);
+          } else {
+            return 0;
+          }
+        });
+
+        const todoTasks = sortedTasks.filter((task) => task.type === "todo");
+        const inProgressTasks = sortedTasks.filter(
           (task) => task.type === "inProgress"
         );
-        const doneTasks = taskData.allTasks.filter(
-          (task) => task.type === "done"
-        );
+        const doneTasks = sortedTasks.filter((task) => task.type === "done");
+
         setData({
-          tasks: taskData.allTasks,
+          tasks: sortedTasks,
           columns: {
             todo: todoTasks,
             inProgress: inProgressTasks,
@@ -54,8 +69,8 @@ const DisplayTasks = ({ query }) => {
   };
 
   useEffect(() => {
-    fetchAllTasks(query);
-  }, []);
+    fetchAllTasks();
+  }, [query]);
 
   const onDragStart = (event, task) => {
     event.dataTransfer.setData("task", JSON.stringify(task));
