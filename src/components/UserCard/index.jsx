@@ -2,6 +2,7 @@ import { useAuth } from "@/context/AuthContext";
 
 const UserCard = () => {
   const { user, logout } = useAuth();
+  console.log("user is",user)
   const handleLogout = async () => {
     try {
       await logout();

@@ -58,9 +58,9 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = async () => {
+    router.push("/login");
     await signOut(auth);
     setUser(null);
-    router.push("/login");
      setTimeout(() => {
        toast.success("Successfully logged-out.", {
          position: "top-right",
