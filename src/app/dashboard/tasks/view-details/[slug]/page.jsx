@@ -2,7 +2,7 @@
 import TaskInputForm from "@/components/TaskCreationForm";
 import { useEffect, useState } from "react";
 
-const viewDetails = ({ params }) => {
+const ViewDetails = ({ params }) => {
   const taskId = params.slug;
   const [task, setTask] = useState(null);
   // Fetch the task details with that id
@@ -49,4 +49,4 @@ const viewDetails = ({ params }) => {
   );
 };
 
-export default viewDetails;
+export default ViewDetails;
