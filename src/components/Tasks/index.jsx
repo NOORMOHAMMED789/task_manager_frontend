@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { getDateFormat } from "../Helpers";
 import Link from "next/link";
+import { toast } from "react-toastify";
 
 const initialData = {
   tasks: [],
@@ -13,19 +14,29 @@ const initialData = {
 
 const DisplayTasks = () => {
   const [data, setData] = useState(initialData);
+
   const fetchAllTasks = async () => {
     try {
-      const taskResp = await fetch(`http://localhost:8080/tasks/all`, {
+      const taskResp = await fetch("http://localhost:8080/tasks/all", {
         method: "GET",
       });
       if (taskResp.ok) {
         const taskData = await taskResp.json();
+        const todoTasks = taskData.allTasks.filter(
+          (task) => task.type === "todo"
+        );
+        const inProgressTasks = taskData.allTasks.filter(
+          (task) => task.type === "inProgress"
+        );
+        const doneTasks = taskData.allTasks.filter(
+          (task) => task.type === "done"
+        );
         setData({
           tasks: taskData.allTasks,
           columns: {
-            todo: taskData.allTasks,
-            inProgress: [],
-            done: [],
+            todo: todoTasks,
+            inProgress: inProgressTasks,
+            done: doneTasks,
           },
         });
       } else {
@@ -48,19 +59,49 @@ const DisplayTasks = () => {
     event.preventDefault();
   };
 
-  const onDrop = (event, columnName) => {
+  const onDrop = async (event, columnName) => {
     const task = JSON.parse(event.dataTransfer.getData("task"));
+    console.log("task is",task)
+    task.type = columnName;
 
-    const newColumns = { ...data.columns };
-    Object.keys(newColumns).forEach((column) => {
-      newColumns[column] = newColumns[column].filter(
-        (t) => t.taskId !== task.taskId
+
+    // Call the update API
+    try {
+      const updateResp = await fetch(
+        `http://localhost:8080/tasks/update?taskId=${task.taskId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(task),
+        }
       );
-    });
-
-    newColumns[columnName].push(task);
-
-    setData({ ...data, columns: newColumns });
+      if (updateResp.ok) {
+        const newColumns = { ...data.columns };
+        Object.keys(newColumns).forEach((column) => {
+          newColumns[column] = newColumns[column].filter(
+            (t) => t.taskId !== task.taskId
+          );
+        });
+        const data1 = await updateResp.json()
+        console.log("data is",data1)
+        newColumns[columnName].push(task);
+        setData({ ...data, columns: newColumns });
+        toast.success(`Task moved to ${columnName}.`, {
+          position: "top-right",
+          autoClose: 1500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          progress: undefined,
+          theme: "light",
+        });
+      } else {
+        console.error("Failed to update task", updateResp.statusText);
+      }
+    } catch (error) {
+      console.error("Error updating task:", error);
+    }
   };
 
   const renderTasks = (tasks) => {
@@ -141,31 +182,6 @@ const DisplayTasks = () => {
           {renderTasks(data.columns?.done)}
         </div>
       </div>
-      <style jsx>{`
-        .task {
-          padding: 10px;
-          margin: 5px;
-          background-color: #fff;
-          border-radius: 5px;
-          box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        .drag-drop-container {
-          display: flex;
-          justify-content: space-around;
-        }
-
-        .drag-drop-container div {
-          width: 30%;
-          padding: 10px;
-          background-color: #f7f7f7;
-          border-radius: 5px;
-        }
-
-        .drag-drop-container h2 {
-          text-align: center;
-        }
-      `}</style>
     </>
   );
 };
