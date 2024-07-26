@@ -37,7 +37,7 @@ const viewDetails = ({ params }) => {
           <label className="mb-2 text-[16px] md:text-[20px] lg:text-[32px] font-bold">
             {`View details: ${task.title}`}
           </label>
-          <TaskInputForm viewDetails={true} editData={task} taskId={taskId} />
+          <TaskInputForm viewDetails={task} editData={task} taskId={taskId} />
         </div>
       )}
       {!task && (
